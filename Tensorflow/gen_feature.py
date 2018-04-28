@@ -114,6 +114,27 @@ def inception_v3(images,
 
   return net
 
+train_list_file = "/home/chengcheng/ImageCaption/Tensorflow/data/train_list.txt"
+valid_list_file = "/home/chengcheng/ImageCaption/Tensorflow/data/valid_list.txt"
+test_list_file = "/home/chengcheng/ImageCaption/Tensorflow/data/test_list.txt"
+train_list_file = open(train_list_file, 'r')
+valid_list_file = open(valid_list_file, 'r')
+test_list_file = open(test_list_file, 'r')
+train_image_list = []
+test_image_list = []
+valid_image_list = []
+
+for line in train_list_file.readlines():
+    train_image_list.append(line.strip().split()[0])
+
+
+for line in valid_list_file.readlines():
+    valid_image_list.append(line.strip().split()[0])
+
+
+for line in test_list_file.readlines():
+    test_image_list.append(line.strip().split()[0])
+
 
 import os
 
@@ -152,6 +173,8 @@ inception_output = inception_v3(image)
 inception_output = tf.reshape(inception_output, [2048])
 saver = tf.train.Saver()
 
+image2feat = {}
+
 # Start a new session to show example output.
 with tf.Session() as sess:
     # Required to get the filename matching to run.
@@ -172,6 +195,7 @@ with tf.Session() as sess:
         key, value= sess.run([inception_output, image_file_name])
         value = value.split('/')[-1]
         print(key, value)
+        image2feat[key] = value
         '''
         value = inception_output.eval()
         print(value)
@@ -188,3 +212,35 @@ with tf.Session() as sess:
     # Finish off the filename queue coordinator.
     coord.request_stop()
     coord.join(threads)
+
+import h5py
+import numpy as np
+
+f = h5py.File('/home/chengcheng/dataset/image_caption/feat.hdf5', 'w')
+# train_set = f.ceate_dataset("train_set", ())
+
+train_feat_list = []
+for train_image in train_image_list:
+    if train_image not in image2feat:
+        # print(train_image + " not found!")
+        continue
+    train_feat_list.append(image2feat[train_image])
+train_set = f.create_dataset("train_set", data=np.array(train_feat_list))
+
+valid_feat_list = []
+for valid_image in valid_image_list:
+    if valid_image not in image2feat:
+        # print(valid_image + " not found!")
+        continue
+    valid_feat_list.append(image2feat[valid_image])
+valid_set = f.create_dataset("valid_set", data=np.array(valid_feat_list))
+
+test_feat_list = []
+for test_image in test_image_list:
+    if test_image not in image2feat:
+        # print(test_image + " not found!")
+        continue
+    test_feat_list.append(image2feat[test_image])
+test_set = f.create_dataset("test_set", data=np.array(test_feat_list))
+
+f.close()
