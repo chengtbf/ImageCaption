@@ -143,7 +143,7 @@ image_list = os.listdir(image_root_path)
 image_path_list = []
 for image_file_name in image_list:
     image_path_list.append(image_root_path + image_file_name)
-image_path_list = image_path_list[0:2]
+# image_path_list = image_path_list[0:10]
 
 # print(image_path_list)
 # Make a queue of file names including all the JPEG images files in the relative
@@ -190,11 +190,11 @@ with tf.Session() as sess:
     # Get an image tensor and print its value.
     # image_tensor = sess.run([image])
     # print(image_tensor)
-    # for i in range(len(image_list)):
-    for i in range(4):
-        key, value= sess.run([inception_output, image_file_name])
-        value = value.split('/')[-1]
-        print(key, value)
+    for i in range(len(image_list)):
+    # for i in range(10):
+        key, value= sess.run([image_file_name ,inception_output])
+        key = key.split('/')[-1]
+        # print(key, value)
         image2feat[key] = value
         '''
         value = inception_output.eval()
@@ -222,25 +222,28 @@ f = h5py.File('/home/chengcheng/dataset/image_caption/feat.hdf5', 'w')
 train_feat_list = []
 for train_image in train_image_list:
     if train_image not in image2feat:
-        # print(train_image + " not found!")
+        print("train image: " + train_image + " not found!")
         continue
     train_feat_list.append(image2feat[train_image])
+    # print("train ",train_image)
 train_set = f.create_dataset("train_set", data=np.array(train_feat_list))
 
 valid_feat_list = []
 for valid_image in valid_image_list:
     if valid_image not in image2feat:
-        # print(valid_image + " not found!")
+        print("valid_image:" + valid_image + " not found!")
         continue
     valid_feat_list.append(image2feat[valid_image])
+    # print("valid ",valid_image)
 valid_set = f.create_dataset("valid_set", data=np.array(valid_feat_list))
 
 test_feat_list = []
 for test_image in test_image_list:
     if test_image not in image2feat:
-        # print(test_image + " not found!")
+        print("test_image: " + test_image + " not found!")
         continue
     test_feat_list.append(image2feat[test_image])
+    # print("test ",test_image)
 test_set = f.create_dataset("test_set", data=np.array(test_feat_list))
 
 f.close()

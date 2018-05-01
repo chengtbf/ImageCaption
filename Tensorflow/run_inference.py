@@ -41,7 +41,7 @@ with open('D:\Image-Caption\Results\\validation_output\\valid_caption_output_seg
     for index in range(1000):
         captions = generator.beam_search(sess, encoded_images[index])
         caption = captions[0]
-        sentence = [vocab.id_to_word(w - 1) for w in caption.sentence[1:-1]]
+        sentence = [vocab.id_to_word(w) for w in caption.sentence[1:-1]]
         full_str = "".join(sentence)
         f.write(repr(8000 + index))
         for word in full_str:

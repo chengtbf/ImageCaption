@@ -39,7 +39,7 @@ class ModelConfig(object):
     self.num_preprocess_threads = 4
 
     # Batch size.
-    self.batch_size = 32
+    self.batch_size = 64
 
     # File containing an Inception v3 checkpoint to initialize the variables
     # of the Inception model. Must be provided when starting training for the
@@ -67,7 +67,7 @@ class TrainingConfig(object):
   def __init__(self):
     """Sets the default training hyperparameters."""
     # Number of examples per epoch of training data.
-    self.num_examples_per_epoch = 96
+    self.num_examples_per_epoch = 187
 
     # Optimizer for training the model.
     self.optimizer = "SGD"

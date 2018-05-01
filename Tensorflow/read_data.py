@@ -10,11 +10,13 @@ class DataIterator:
 
         images_and_captions = []
         index = -1
+        image_name = ""
         for line in open(caption_vector_path):
             strs = line.split()
             if len(strs) == 1:
                 index = index + 1
-                if index == 8000:
+                image_name = strs[0]
+                if index == 6000:
                     break
             else:
                 nums = []

@@ -16,11 +16,11 @@ dic["<S>"] = 0
 dic["</S>"] = 1
 dic["<UNK>"] = 2
 '''
-dic = ["<S>","</S>","<UNK>"]
+dic = ["<UNK>","<S>","</S>"]
 word2id = {}
-word2id["<S>"] = 0
-word2id["</S>"] = 1
-word2id["<UNK>"] = 2
+word2id["<S>"] = 1
+word2id["</S>"] = 2
+word2id["<UNK>"] = 0
 
 token_file = open(token_file)
 dic_file = open(dic_file, 'w')
@@ -112,12 +112,12 @@ for line in lines:
         file_now.write(image + "\n")
         list_file_now.write(image + "\n")
 
-    file_now.write("0 ")
+    file_now.write("1 ")
     for i in range(1,len(strs)):
         word = strs[i].lower()
         id = word2id[word]
         file_now.write(repr(id) + " ")
-    file_now.write("1\n")
+    file_now.write("2\n")
 
 train_file.close()
 valid_file.close()

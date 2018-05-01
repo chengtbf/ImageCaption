@@ -29,7 +29,7 @@ class ShowAndTellModel(object):
         minval=-self.config.initializer_scale,
         maxval=self.config.initializer_scale)
 
-    # A float32 Tensor with shape [batch_size, 4096].
+    # A float32 Tensor with shape [batch_size, 2048].
     self.images = None
 
     # An int32 Tensor with shape [batch_size, padded_length].
@@ -78,7 +78,7 @@ class ShowAndTellModel(object):
     """
     if self.mode == "inference":
       # In inference mode, images and inputs are fed via placeholders.
-      image_feed = tf.placeholder(dtype=tf.float32, shape=[4096], name="image_feed")
+      image_feed = tf.placeholder(dtype=tf.float32, shape=[2048], name="image_feed")
       input_feed = tf.placeholder(dtype=tf.int64,
                                   shape=[None],  # batch_size
                                   name="input_feed")
@@ -96,7 +96,7 @@ class ShowAndTellModel(object):
       self.input_mask = input_mask
       self.target_seqs = target_seqs
     else:
-      self.images = tf.placeholder(tf.float32, shape=[self.config.batch_size, 4096])
+      self.images = tf.placeholder(tf.float32, shape=[self.config.batch_size, 2048])
       self.input_seqs = tf.placeholder(tf.int32, shape=[self.config.batch_size, None])
       self.target_seqs = tf.placeholder(tf.int32, shape=[self.config.batch_size, None])
       self.input_mask = tf.placeholder(tf.int32, shape=[self.config.batch_size, None])
