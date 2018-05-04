@@ -27,7 +27,7 @@ model.build()
 
 sess.run(tf.global_variables_initializer())
 
-saver = tf.train.Saver(max_to_keep=30)
+saver = tf.train.Saver(max_to_keep=20)
 
 loss_stored = []
 
@@ -36,7 +36,7 @@ best_loss = 9999
 # step = epoch * train_data_set / batch_size
 
 # with tf.device('/gpu:1'):
-for i in range(500000):
+for i in range(800000):
     images, in_seqs, tar_seqs, masks = iter.next_batch(model_config.batch_size)
     loss = model.run_batch(sess, images, in_seqs, tar_seqs, masks)
     #every 100 steps print loss value

@@ -2,13 +2,14 @@ token_file = "/home/chengcheng/dataset/image_caption/label/Flickr8k.lemma.token.
 train_images = "/home/chengcheng/dataset/image_caption/label/Flickr_8k.trainImages.txt"
 valid_images = "/home/chengcheng/dataset/image_caption/label/Flickr_8k.devImages.txt"
 test_images = "/home/chengcheng/dataset/image_caption/label/Flickr_8k.testImages.txt"
-dic_file = "/home/chengcheng/ImageCaption/Tensorflow/data/dic.txt"
-train_file = "/home/chengcheng/ImageCaption/Tensorflow/data/train_vector.txt"
-valid_file = "/home/chengcheng/ImageCaption/Tensorflow/data/valid_vector.txt"
-test_file = "/home/chengcheng/ImageCaption/Tensorflow/data/test_vector.txt"
-train_list_file = "/home/chengcheng/ImageCaption/Tensorflow/data/train_list.txt"
-valid_list_file = "/home/chengcheng/ImageCaption/Tensorflow/data/valid_list.txt"
-test_list_file = "/home/chengcheng/ImageCaption/Tensorflow/data/test_list.txt"
+dic_file = "/home/chengcheng/ImageCaption/data/dic.txt"
+train_file = "/home/chengcheng/ImageCaption/data/train_vector.txt"
+valid_file = "/home/chengcheng/ImageCaption/data/valid_vector.txt"
+test_file = "/home/chengcheng/ImageCaption/data/test_vector.txt"
+train_list_file = "/home/chengcheng/ImageCaption/data/train_list.txt"
+valid_list_file = "/home/chengcheng/ImageCaption/data/valid_list.txt"
+test_list_file = "/home/chengcheng/ImageCaption/data/test_list.txt"
+
 
 '''
 dic = {}
@@ -104,6 +105,7 @@ for line in lines:
             file_now = valid_file
             list_file_now = valid_list_file
         elif image_now in test_image_list:
+            file_now = test_file
             list_file_now = test_list_file
         else :
             print("can't find :" + image)

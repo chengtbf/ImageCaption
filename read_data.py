@@ -7,6 +7,7 @@ class DataIterator:
         # structure of h5 file ['test_set', 'train_set', 'validation_set']
         file = h5py.File(encoded_image_path, 'r')
         encoded_images = file['train_set']
+        print("train_size :" + str(len(encoded_images)))
 
         images_and_captions = []
         index = -1
