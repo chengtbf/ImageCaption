@@ -25,6 +25,8 @@ for line in valid_file.readlines():
     strs = line.strip().split()
     if len(strs) == 1:
         image_id = dic[strs[0]]
+        image = {'id': image_id }
+        anno["images"].append(image)
     else:
         sentence = ""
         for i in range(1, len(strs) - 1):
@@ -32,8 +34,6 @@ for line in valid_file.readlines():
             sentence = sentence + " " + word
         one_anno = {'id': index, 'caption':sentence, 'image_id': image_id}
         anno["annotations"].append(one_anno)
-        image = {'id': image_id }
-        anno["images"].append(image)
         index+=1
 
 

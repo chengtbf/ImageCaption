@@ -20,7 +20,7 @@ restore_fn = model.build_graph_from_config(configuration.ModelConfig(),
 sess = tf.InteractiveSession()
 restore_fn(sess)
 
-generator = caption_generator.CaptionGenerator(model, vocab)
+generator = caption_generator.CaptionGenerator(model, vocab, beam_size=1)
 
 valid_list_file = open(valid_list_file, 'r')
 valid_image_list = []
