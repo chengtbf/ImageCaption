@@ -9,12 +9,12 @@ import math
 vocab = vocabulary.Vocabulary("data/dic.txt")
 file = h5py.File("/home/chengcheng/dataset/image_caption/feat.hdf5", 'r')
 encoded_images = file['valid_set']
-valid_list_file = "/home/chengcheng/ImageCaption/Tensorflow/data/valid_list.txt"
-check_point_steps = 500000
+valid_list_file = "/home/chengcheng/ImageCaption/data/valid_list.txt"
+check_point_steps = 800000
 
 model = inference_wrapper.InferenceWrapper()
 restore_fn = model.build_graph_from_config(configuration.ModelConfig(),
-                                               "/home/chengcheng/dataset/image_caption/checkpoints/2/{}.ckpt".format(check_point_steps))
+                                               "train_log/{}.ckpt".format(check_point_steps))
 
 sess = tf.InteractiveSession()
 restore_fn(sess)
@@ -26,7 +26,7 @@ valid_image_list = []
 for line in valid_list_file.readlines():
     valid_image_list.append(line.strip().split()[0])
 # output three optional sentences for each image, ranking by probability in decreasing order
-with open('/home/chengcheng/dataset/image_caption/inference/2/valid_caption_{}.txt'.format(check_point_steps), 'w') as f:
+with open('infer_result/6000_0_valid_caption_{}.txt'.format(check_point_steps), 'w') as f:
     for index in range(1000):
         captions = generator.beam_search(sess, encoded_images[index])
         f.write(valid_image_list[index])

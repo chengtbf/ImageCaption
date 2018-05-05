@@ -11,11 +11,13 @@ vocab = vocabulary.Vocabulary("data/dic.txt")
 file = h5py.File("/home/chengcheng/dataset/image_caption/feat.hdf5", 'r')
 encoded_images = file['valid_set']
 valid_list_file = "/home/chengcheng/ImageCaption/data/valid_list.txt"
-check_point_steps = 500000
+check_point_steps = 800000
+
+check_point_path = "/home/chengcheng/dataset/image_caption/checkpoints/6000_0/{}.ckpt"
 
 model = inference_wrapper.InferenceWrapper()
 restore_fn = model.build_graph_from_config(configuration.ModelConfig(),
-                                               "/home/chengcheng/dataset/image_caption/checkpoints/2/{}.ckpt".format(check_point_steps))
+                                               check_point_path.format(check_point_steps))
 
 sess = tf.InteractiveSession()
 restore_fn(sess)
@@ -46,5 +48,5 @@ for index in range(1000):
         # print("  %d) %s (p=%f)" % (i, sentence, math.exp(caption.logprob)))
 
 
-result_file = open("/home/chengcheng/ImageCaption/data/valid_result.json","w")
+result_file = open("infer_result/6000_0_valid_result_800k.json","w")
 json.dump(result_list, result_file)

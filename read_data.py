@@ -17,7 +17,7 @@ class DataIterator:
             if len(strs) == 1:
                 index = index + 1
                 image_name = strs[0]
-                if index == 6000:
+                if index == 3000:
                     break
             else:
                 nums = []

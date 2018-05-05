@@ -7,13 +7,11 @@ from json import encoder
 encoder.FLOAT_REPR = lambda o: format(o, '.3f')
 
 # set up file names and pathes
-dataDir='.'
-dataType='valid'
-algName = 'result'
+resultFile="infer_result/6000_0_valid_result_800k.json"
 annFile='data/valid_anno.json'
 subtypes=['result', 'evalImgs', 'eval']
 [resFile, evalImgsFile, evalFile]= \
-['data/valid_result.json' for subtype in subtypes]
+[resultFile for subtype in subtypes]
 
 # create coco object and cocoRes object
 coco = COCO(annFile)

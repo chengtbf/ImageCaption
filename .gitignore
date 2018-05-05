@@ -2,4 +2,7 @@
 *.jar
 *.gz
 *.mdb
-pycocoevalcap/spice/cache
+/train_log/*
+/pycocoevalcap/spice/cache/*
+/pycocoevalcap/spice/cache/data.mdb
+/pycocoevalcap/spice/cache/lock.mdb
