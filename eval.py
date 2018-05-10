@@ -6,12 +6,15 @@ import json
 from json import encoder
 encoder.FLOAT_REPR = lambda o: format(o, '.3f')
 
+check_point_steps = 800000
+label_image_num = 500
+unlabel_image_num = 0
 # set up file names and pathes
-resultFile="infer_result/6000_0_valid_result_800k.json"
+resultFile="infer_result/{}_{}_valid_result_{}.json"
 annFile='data/valid_anno.json'
 subtypes=['result', 'evalImgs', 'eval']
 [resFile, evalImgsFile, evalFile]= \
-[resultFile for subtype in subtypes]
+[resultFile.format(label_image_num, unlabel_image_num, check_point_steps) for subtype in subtypes]
 
 # create coco object and cocoRes object
 coco = COCO(annFile)
@@ -29,12 +32,13 @@ cocoEval = COCOEvalCap(coco, cocoRes)
 cocoEval.evaluate()
 
 eval_result = open('data/eval_result.txt','a')
-eval_result.write("6000train_0unlabel_result:\n")
+eval_result.write("{}label_{}unlabel_{}step_result:\n".format(label_image_num, unlabel_image_num, check_point_steps))
 print('final result:')
 
 for metric, score in cocoEval.eval.items():
     print('%s: %.3f'%(metric, score))
     eval_result.write(str(metric)+ ": " + str(score) + " |")
+eval_result.write("\n");
 eval_result.close();
 
 

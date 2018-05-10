@@ -12,12 +12,14 @@ file = h5py.File("/home/chengcheng/dataset/image_caption/feat.hdf5", 'r')
 encoded_images = file['valid_set']
 valid_list_file = "/home/chengcheng/ImageCaption/data/valid_list.txt"
 check_point_steps = 800000
+label_image_num = 500
+unlabel_image_num = 0
 
-check_point_path = "/home/chengcheng/dataset/image_caption/checkpoints/6000_0/{}.ckpt"
+check_point_path = "/home/chengcheng/dataset/image_caption/checkpoints/{}_{}/{}.ckpt"
 
 model = inference_wrapper.InferenceWrapper()
 restore_fn = model.build_graph_from_config(configuration.ModelConfig(),
-                                               check_point_path.format(check_point_steps))
+                                               check_point_path.format(label_image_num, unlabel_image_num,check_point_steps))
 
 sess = tf.InteractiveSession()
 restore_fn(sess)
@@ -48,5 +50,5 @@ for index in range(1000):
         # print("  %d) %s (p=%f)" % (i, sentence, math.exp(caption.logprob)))
 
 
-result_file = open("infer_result/6000_0_valid_result_800k.json","w")
+result_file = open("infer_result/{}_{}_valid_result_{}.json".format(label_image_num, unlabel_image_num,check_point_steps),"w")
 json.dump(result_list, result_file)
