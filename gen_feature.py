@@ -114,9 +114,9 @@ def inception_v3(images,
 
   return net
 
-train_list_file = "/home/chengcheng/ImageCaption/Tensorflow/data/train_list.txt"
-valid_list_file = "/home/chengcheng/ImageCaption/Tensorflow/data/valid_list.txt"
-test_list_file = "/home/chengcheng/ImageCaption/Tensorflow/data/test_list.txt"
+train_list_file = "data/train_list.txt"
+valid_list_file = "data/valid_list.txt"
+test_list_file = "data/test_list.txt"
 train_list_file = open(train_list_file, 'r')
 valid_list_file = open(valid_list_file, 'r')
 test_list_file = open(test_list_file, 'r')
@@ -138,6 +138,7 @@ for line in test_list_file.readlines():
 
 import os
 
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 image_root_path = "/home/chengcheng/dataset/image_caption/image/Flicker8k_Dataset/"
 image_list = os.listdir(image_root_path)
 image_path_list = []
@@ -164,8 +165,8 @@ image_file_name, image_file = image_reader.read(filename_queue)
 # then use in training.
 image = tf.image.decode_jpeg(image_file)
 image = tf.image.convert_image_dtype(image, dtype=tf.float32)
-iamge = tf.image.resize_images(image, size=[346,346],method=tf.image.ResizeMethod.BILINEAR)
-image = tf.image.resize_image_with_crop_or_pad(image, 299, 299)
+image = tf.image.resize_images(image, size=[299,299],method=tf.image.ResizeMethod.BILINEAR)
+# image = tf.image.resize_image_with_crop_or_pad(image, 299, 299)
 image = tf.subtract(image, 0.5)
 image = tf.multiply(image, 2.0)
 image = tf.reshape(image, [1, 299, 299, 3])
@@ -196,6 +197,8 @@ with tf.Session() as sess:
         key = key.split('/')[-1]
         # print(key, value)
         image2feat[key] = value
+        if i % 100 == 0:
+            print(i,' Done')
         '''
         value = inception_output.eval()
         print(value)
@@ -216,7 +219,7 @@ with tf.Session() as sess:
 import h5py
 import numpy as np
 
-f = h5py.File('/home/chengcheng/dataset/image_caption/feat.hdf5', 'w')
+f = h5py.File('/home/chengcheng/dataset/image_caption/feat2.hdf5', 'w')
 # train_set = f.ceate_dataset("train_set", ())
 
 train_feat_list = []
@@ -227,6 +230,7 @@ for train_image in train_image_list:
     train_feat_list.append(image2feat[train_image])
     # print("train ",train_image)
 train_set = f.create_dataset("train_set", data=np.array(train_feat_list))
+print("train_set done.")
 
 valid_feat_list = []
 for valid_image in valid_image_list:
@@ -236,6 +240,7 @@ for valid_image in valid_image_list:
     valid_feat_list.append(image2feat[valid_image])
     # print("valid ",valid_image)
 valid_set = f.create_dataset("valid_set", data=np.array(valid_feat_list))
+print("valid_set done.")
 
 test_feat_list = []
 for test_image in test_image_list:
@@ -245,5 +250,6 @@ for test_image in test_image_list:
     test_feat_list.append(image2feat[test_image])
     # print("test ",test_image)
 test_set = f.create_dataset("test_set", data=np.array(test_feat_list))
+print("test_set done.")
 
 f.close()

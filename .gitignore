@@ -1,3 +1,4 @@
+*.hdf5
 *.pyc
 *.jar
 *.gz
@@ -6,3 +7,4 @@
 /pycocoevalcap/spice/cache/*
 /pycocoevalcap/spice/cache/data.mdb
 /pycocoevalcap/spice/cache/lock.mdb
+/data/feat.hdf5
