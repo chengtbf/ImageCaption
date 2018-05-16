@@ -1,15 +1,20 @@
 import h5py
 import numpy as np
+import inference_wrapper
+import configuration
+import tensorflow as tf
+import caption_generator
 
 class DataIterator:
-    def __init__(self, encoded_image_path, caption_vector_path):
-
+    def __init__(self, encoded_image_path, caption_vector_path, label_size, unlabel_size):
+        self.label_size = label_size
+        self.unlabel_size = unlabel_size
         # structure of h5 file ['test_set', 'train_set', 'validation_set']
         file = h5py.File(encoded_image_path, 'r')
         encoded_images = file['train_set']
         print("train_size :" + str(len(encoded_images)))
 
-        images_and_captions = []
+        label_images_and_captions = []
         index = -1
         image_name = ""
         for line in open(caption_vector_path):
@@ -17,32 +22,40 @@ class DataIterator:
             if len(strs) == 1:
                 index = index + 1
                 image_name = strs[0]
-                if index == 500:
+                if index == label_size:
                     break
             else:
                 nums = []
                 for e in strs:
                     nums.append(int(e))
-                images_and_captions.append([encoded_images[index], nums])
+                label_images_and_captions.append([encoded_images[index], nums])
 
-        self.images_and_captions = images_and_captions
+        self.label_images_and_captions = label_images_and_captions
+        self.unlabel_images_and_captions = []
+        self.total_images_and_captions = label_images_and_captions
 
-        self.iter_order = np.random.permutation(len(images_and_captions))
+        unlabel_images = []
+        for i in range(unlabel_size):
+            unlabel_images.append(encoded_images[i+label_size])
+        self.unlabel_images = unlabel_images
+        print('unlabel images size is {}'.format(len(self.unlabel_images)))
+
+        self.iter_order = np.random.permutation(len(label_images_and_captions))
         self.cur_iter_index = 0
         print("Finish loading data")
 
-        print('Training set size is {}'.format(len(images_and_captions)))
+        print('Training set size is {}'.format(len(label_images_and_captions)))
 
     def next_batch(self, batch_size):
-        if self.cur_iter_index + batch_size >= len(self.images_and_captions):
-            self.iter_order = np.random.permutation(len(self.images_and_captions))
+        if self.cur_iter_index + batch_size >= len(self.total_images_and_captions):
+            self.iter_order = np.random.permutation(len(self.total_images_and_captions))
             self.cur_iter_index = 0
 
         images = []
         captions = []
 
         for i in range(batch_size):
-            image, caption = self.images_and_captions[self.cur_iter_index+i]
+            image, caption = self.total_images_and_captions[self.cur_iter_index+i]
             images.append(image)
             captions.append(caption)
 
@@ -50,6 +63,27 @@ class DataIterator:
 
         self.cur_iter_index = self.cur_iter_index + batch_size
         return images, input_seqs, target, masks
+
+    def infer_unlabel_image_captions(self, check_point_path, vocab):
+        with tf.variable_scope(tf.get_variable_scope(), reuse=True):
+            model = inference_wrapper.InferenceWrapper()
+            restore_fn = model.build_graph_from_config(configuration.ModelConfig(),
+                                                       check_point_path)
+            sess = tf.InteractiveSession()
+            restore_fn(sess)
+
+            generator = caption_generator.CaptionGenerator(model, vocab, beam_size=3)
+
+            self.unlabel_images_and_captions = []
+            for i in range(self.unlabel_size):
+                captions = generator.beam_search(sess, self.unlabel_images[i])
+                for caption in captions:
+                    self.unlabel_images_and_captions.append([self.unlabel_images[i], caption])
+
+            print('unlabel images captions size is {}'.format(len(self.unlabel_images_and_captions)))
+            self.total_images_and_captions  = self.label_images_and_captions + self.unlabel_images_and_captions
+            self.iter_order = np.random.permutation(len(self.total_images_and_captions))
+            self.cur_iter_index = 0
 
 
     # transform raw captions to three parts

@@ -9,6 +9,7 @@ from __future__ import print_function
 
 
 import tensorflow as tf
+import configuration
 
 
 class ShowAndTellModel(object):
@@ -253,7 +254,30 @@ class ShowAndTellModel(object):
     print("Finish building model")
     if self.mode == "train":
         self.train_op = tf.train.AdamOptimizer(learning_rate=0.0001).minimize(self.total_loss)
+        '''
+        training_config = configuration.TrainingConfig()
+        learning_rate_decay_fn=None
+        if training_config.learning_rate_decay_factor>0:
+            num_batchs_per_epoch = (training_config.num_examples_per_epoch / self.config.batch_size)
+            decay_steps = int(num_batchs_per_epoch * training_config.num_epochs_per_decay)
 
+            def _learning_rate_decay_fn(learning_rate, global_step):
+                return tf.train.exponential_decay(
+                        learning_rate,
+                        global_step,
+                        decay_steps=decay_steps,
+                        decay_rate=training_config.learning_rate_decay_factor,
+                        staircase=True)
+            print("decay_steps: {}".format(decay_steps))
+            learning_rate_decay_fn = _learning_rate_decay_fn
+        self.train_op = tf.contrib.layers.optimize_loss(
+                loss=self.total_loss,
+                global_step=self.global_step,
+                learning_rate=tf.constant(training_config.train_inception_learning_rate),
+                optimizer=training_config.optimizer,
+                clip_gradients=training_config.clip_gradients,
+                learning_rate_decay_fn=learning_rate_decay_fn)
+        '''
   def run_batch(self, session, _images, _input_seqs, _target_seqs, _input_mask):
     #session.run(tf.initialize_all_variables())
     feed = {self.input_seqs: _input_seqs, self.images: _images, self.input_mask: _input_mask, self.target_seqs: _target_seqs}

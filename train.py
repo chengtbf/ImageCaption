@@ -7,14 +7,13 @@ import configuration
 import show_and_tell_model
 import read_data
 import os
+import vocabulary
 
 model_config = configuration.ModelConfig()
 training_config = configuration.TrainingConfig()
 
-
-
 iter = read_data.DataIterator(encoded_image_path="/home/chengcheng/dataset/image_caption/feat.hdf5",
-                              caption_vector_path="data/train_vector.txt")
+                              caption_vector_path="data/train_vector.txt",label_size=500,unlabel_size=0)
 
 # gpu_config = tf.ConfigProto(device_count = {'GPU': 1})
 # sess = tf.InteractiveSession(config=gpu_config)
@@ -27,16 +26,18 @@ model.build()
 
 sess.run(tf.global_variables_initializer())
 
-saver = tf.train.Saver(max_to_keep=20)
+saver = tf.train.Saver(max_to_keep=5)
 
 loss_stored = []
 
 best_loss = 9999
 
+vocab = vocabulary.Vocabulary("data/dic.txt")
+
 # step = epoch * train_data_set / batch_size
 
 # with tf.device('/gpu:1'):
-for i in range(800000):
+for i in range(100000):
     images, in_seqs, tar_seqs, masks = iter.next_batch(model_config.batch_size)
     loss = model.run_batch(sess, images, in_seqs, tar_seqs, masks)
     #every 100 steps print loss value
@@ -48,6 +49,10 @@ for i in range(800000):
     if (i+1) % 20000 == 0:
         print('save... step: {}, loss: {}'.format(i+1, loss))
         save_path = saver.save(sess, 'train_log/{}.ckpt'.format(i+1))
+'''
+        if(i+1)% 100000 ==0:
+            iter.infer_unlabel_image_captions('train_log/{}.ckpt'.format(i+1), vocab)
+'''
 
 with open('train_log/loss.txt', 'w') as f:
     for e in loss_stored:
