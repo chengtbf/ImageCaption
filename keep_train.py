@@ -5,7 +5,7 @@ import tensorflow as tf
 import show_and_tell_model
 import read_data
 
-train_step = 1
+train_step = 2
 
 checkpoint_steps = 100000 * train_step
 label_image_num = 500

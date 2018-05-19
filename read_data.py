@@ -37,7 +37,7 @@ class DataIterator:
                 images_and_captions.append([encoded_images[index], nums])
 
         self.images_and_captions = images_and_captions
-
+        print('index is = ',index)
         self.iter_order = np.random.permutation(len(images_and_captions))
         self.cur_iter_index = 0
         print("Finish loading data")

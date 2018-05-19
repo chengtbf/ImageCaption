@@ -12,7 +12,7 @@ file = h5py.File("data/feat.hdf5", 'r')
 encoded_images = file['train_set']
 train_list_file = "data/train_list.txt"
 train_vector_file = "data/train_vector.txt"
-train_step = 1
+train_step = 2
 checkpoint_steps = 100000 * train_step
 
 label_image_num = 500

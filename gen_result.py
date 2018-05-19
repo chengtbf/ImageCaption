@@ -7,19 +7,24 @@ import caption_generator
 import math
 import json
 
-vocab = vocabulary.Vocabulary("data/dic.txt")
-file = h5py.File("/home/chengcheng/dataset/image_caption/feat.hdf5", 'r')
-encoded_images = file['valid_set']
-valid_list_file = "/home/chengcheng/ImageCaption/data/valid_list.txt"
-check_point_steps = 800000
-label_image_num = 500
-unlabel_image_num = 0
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
-check_point_path = "/home/chengcheng/dataset/image_caption/checkpoints/{}_{}/{}.ckpt"
+vocab = vocabulary.Vocabulary("data/dic.txt")
+file = h5py.File("data/feat.hdf5", 'r')
+encoded_images = file['valid_set']
+valid_list_file = "data/valid_list.txt"
+train_step = 1
+check_point_steps = 100000 * (1 + train_step)
+label_image_num = 500
+unlabel_image_num = 5500
+
+# check_point_path = "/home/chengcheng/dataset/image_caption/checkpoints/{}_{}/{}.ckpt".format(label_image_num, unlabel_image_num,check_point_steps)
+check_point_path = "train_log/{}.ckpt".format(check_point_steps)
 
 model = inference_wrapper.InferenceWrapper()
 restore_fn = model.build_graph_from_config(configuration.ModelConfig(),
-                                               check_point_path.format(label_image_num, unlabel_image_num,check_point_steps))
+                                               check_point_path)
 
 sess = tf.InteractiveSession()
 restore_fn(sess)
@@ -39,7 +44,8 @@ for index in range(1000):
     captions = generator.beam_search(sess, encoded_images[index])
     # if encoded_images[index] != valid_image_list[index]:
     #    print(encoded_images[index], valid_image_list[index])
-
+    if index % 100 == 0:
+        print(index, '...Done')
     # print("Captions for image {}".format(valid_image_list[index]))
     for i, caption in enumerate(captions):
         # Ignore begin and end words.
@@ -50,5 +56,5 @@ for index in range(1000):
         # print("  %d) %s (p=%f)" % (i, sentence, math.exp(caption.logprob)))
 
 
-result_file = open("infer_result/{}_{}_valid_result_{}.json".format(label_image_num, unlabel_image_num,check_point_steps),"w")
+result_file = open("infer_result/{}_{}_valid_result_feat2_it{}_{}.json".format(label_image_num, unlabel_image_num, train_step, check_point_steps),"w")
 json.dump(result_list, result_file)
