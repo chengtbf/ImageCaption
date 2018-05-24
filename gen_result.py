@@ -15,12 +15,14 @@ file = h5py.File("data/feat.hdf5", 'r')
 encoded_images = file['valid_set']
 valid_list_file = "data/valid_list.txt"
 train_step = 1
-check_point_steps = 100000 * (1 + train_step)
-label_image_num = 500
-unlabel_image_num = 5500
+single_train_step_checkpoints = 300000
+checkpoint_steps = single_train_step_checkpoints * (1 + train_step)
+label_image_num = 1000
+unlabel_image_num = 5000
 
-# check_point_path = "/home/chengcheng/dataset/image_caption/checkpoints/{}_{}/{}.ckpt".format(label_image_num, unlabel_image_num,check_point_steps)
-check_point_path = "train_log/{}.ckpt".format(check_point_steps)
+# check_point_path = "/home/chengcheng/dataset/image_caption/checkpoints/{}_{}/{}.ckpt".format(label_image_num, unlabel_image_num,checkpoint_steps)
+check_point_path = "train_log/{}.ckpt".format(checkpoint_steps)
+# check_point_path = "train_log/{}.ckpt".format(280000)
 
 model = inference_wrapper.InferenceWrapper()
 restore_fn = model.build_graph_from_config(configuration.ModelConfig(),
@@ -36,7 +38,7 @@ valid_image_list = []
 for line in valid_list_file.readlines():
     valid_image_list.append(line.strip().split()[0])
 # output three optional sentences for each image, ranking by probability in decreasing order
-# with open('/home/chengcheng/dataset/image_caption/inference/3/valid_caption_{}.txt'.format(check_point_steps), 'w') as f:
+# with open('/home/chengcheng/dataset/image_caption/inference/3/valid_caption_{}.txt'.format(checkpoint_steps), 'w') as f:
 
 result_list = []
 
@@ -56,5 +58,6 @@ for index in range(1000):
         # print("  %d) %s (p=%f)" % (i, sentence, math.exp(caption.logprob)))
 
 
-result_file = open("infer_result/{}_{}_valid_result_feat2_it{}_{}.json".format(label_image_num, unlabel_image_num, train_step, check_point_steps),"w")
+result_file = open("infer_result/{}_{}_valid_result_feat2_it{}_{}.json".format(label_image_num, unlabel_image_num, train_step, checkpoint_steps),"w")
+# result_file = open("infer_result/1000_0_valid_result_280k_2.json","w")
 json.dump(result_list, result_file)

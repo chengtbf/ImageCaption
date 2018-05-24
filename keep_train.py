@@ -5,11 +5,11 @@ import tensorflow as tf
 import show_and_tell_model
 import read_data
 
-train_step = 2
-
-checkpoint_steps = 100000 * train_step
-label_image_num = 500
-unlabel_image_num = 5500
+train_step = 1
+single_train_step_checkpoints = 300000
+checkpoint_steps = single_train_step_checkpoints * train_step
+label_image_num = 1000
+unlabel_image_num = 5000
 
 checkpoint_path = "train_log/{}.ckpt".format(checkpoint_steps)
 
@@ -43,7 +43,7 @@ loss_stored = []
 # step = epoch * train_data_set / batch_size
 
 # with tf.device('/gpu:1'):
-for i in range(train_step * 100000, (train_step + 1) * 100000):
+for i in range(train_step * single_train_step_checkpoints, (train_step + 1) * single_train_step_checkpoints):
     images, in_seqs, tar_seqs, masks = iter.next_batch(model_config.batch_size)
     loss = model.run_batch(sess, images, in_seqs, tar_seqs, masks)
     #every 100 steps print loss value

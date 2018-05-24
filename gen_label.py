@@ -12,11 +12,12 @@ file = h5py.File("data/feat.hdf5", 'r')
 encoded_images = file['train_set']
 train_list_file = "data/train_list.txt"
 train_vector_file = "data/train_vector.txt"
-train_step = 2
-checkpoint_steps = 100000 * train_step
+train_step = 1
+single_train_step_checkpoints = 300000
+checkpoint_steps = single_train_step_checkpoints * train_step
 
-label_image_num = 500
-unlabel_image_num = 5500
+label_image_num = 1000
+unlabel_image_num = 5000
 
 checkpoint_path = "train_log/{}.ckpt".format(checkpoint_steps)
 

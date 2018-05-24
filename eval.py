@@ -6,12 +6,14 @@ import json
 from json import encoder
 encoder.FLOAT_REPR = lambda o: format(o, '.3f')
 
-label_image_num = 500
-unlabel_image_num = 5500
-train_step = 1
+label_image_num = 1000
+unlabel_image_num = 0
+train_step = 2
 check_point_steps = 100000 * (1 + train_step)
+# check_point_steps = 260000
 # set up file names and pathes
-resultFile="infer_result/{}_{}_valid_result_feat2_it{}_{}.json"
+# resultFile="infer_result/{}_{}_valid_result_feat2_it{}_{}.json"
+resultFile = "infer_result/1000_0_valid_result_280k_2.json"
 annFile='data/valid_anno.json'
 subtypes=['result', 'evalImgs', 'eval']
 [resFile, evalImgsFile, evalFile]= \
@@ -33,7 +35,7 @@ cocoEval = COCOEvalCap(coco, cocoRes)
 cocoEval.evaluate()
 
 eval_result = open('data/eval_result.txt','a')
-eval_result.write("{}label_{}unlabel_{}step_feat2_it{}_result:\n".format(label_image_num, unlabel_image_num, train_step,check_point_steps))
+eval_result.write("{}label_{}unlabel_{}step_it{}_gram{}_result:\n".format(label_image_num, unlabel_image_num, train_step,check_point_steps, 0))
 print('final result:')
 
 for metric, score in cocoEval.eval.items():

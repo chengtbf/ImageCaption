@@ -12,7 +12,7 @@ model_config = configuration.ModelConfig()
 training_config = configuration.TrainingConfig()
 
 iter = read_data.DataIterator(encoded_image_path="data/feat.hdf5",
-                              caption_vector_path="data/train_vector.txt", image_size=500)
+                              caption_vector_path="data/train_vector.txt", image_size=1000)
 
 # gpu_config = tf.ConfigProto(device_count = {'GPU': 1})
 # sess = tf.InteractiveSession(config=gpu_config)
@@ -32,7 +32,7 @@ loss_stored = []
 # step = epoch * train_data_set / batch_size
 
 # with tf.device('/gpu:1'):
-for i in range(100000):
+for i in range(300000):
     images, in_seqs, tar_seqs, masks = iter.next_batch(model_config.batch_size)
     loss = model.run_batch(sess, images, in_seqs, tar_seqs, masks)
     #every 100 steps print loss value
