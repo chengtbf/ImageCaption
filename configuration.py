@@ -60,6 +60,26 @@ class ModelConfig(object):
     # If < 1.0, the dropout keep probability applied to LSTM variables.
     self.lstm_dropout_keep_prob = 0.7
 
+class MyConfig(object):
+  def __init__(self):
+    self.train_step = 3
+
+    self.label_image_size = 2000
+    self.unlabel_image_size = 6000 - self.label_image_size
+
+    self.beam_size = 1
+
+    self.feat_path = "data/feat.hdf5"
+
+    self.original_train_vec_path = "data/train_vector.txt"
+
+    self.original_train_steps = 300000
+
+    self.interval_train_steps = 140000
+
+    self.n_gram = 0
+
+
 
 class TrainingConfig(object):
   """Wrapper class for training hyperparameters."""

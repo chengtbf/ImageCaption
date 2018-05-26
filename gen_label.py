@@ -7,17 +7,15 @@ import caption_generator
 import math
 import json
 
+conf = configuration.MyConfig()
 vocab = vocabulary.Vocabulary("data/dic.txt")
 file = h5py.File("data/feat.hdf5", 'r')
 encoded_images = file['train_set']
 train_list_file = "data/train_list.txt"
 train_vector_file = "data/train_vector.txt"
-train_step = 1
-single_train_step_checkpoints = 300000
-checkpoint_steps = single_train_step_checkpoints * train_step
 
-label_image_num = 1000
-unlabel_image_num = 5000
+train_step = conf.train_step
+checkpoint_steps = conf.original_train_steps + (train_step - 1) * conf.interval_train_steps
 
 checkpoint_path = "train_log/{}.ckpt".format(checkpoint_steps)
 
@@ -28,7 +26,7 @@ restore_fn = model.build_graph_from_config(configuration.ModelConfig(),
 sess = tf.InteractiveSession()
 restore_fn(sess)
 
-generator = caption_generator.CaptionGenerator(model, vocab, beam_size=1)
+generator = caption_generator.CaptionGenerator(model, vocab, beam_size=conf.beam_size)
 
 train_list_file = open(train_list_file, 'r')
 train_image_list = []
@@ -49,16 +47,17 @@ for line in open(train_vector_file):
         image_name = strs[0]
         if train_image_list[index] != image_name:
             print('wrong! ' + train_image_list[index] + " != " + image_name)
-        if index == label_image_num:
+        if index == conf.label_image_size:
             break
     label_file.write(line)
 
-for index in range(index, index + unlabel_image_num):
+for index in range(index, index + conf.unlabel_image_size):
     captions = generator.beam_search(sess, encoded_images[index])
     # if encoded_images[index] != train_image_list[index]:
     #    print(encoded_images[index], train_image_list[index])
     label_file.write(train_image_list[index]+"\n")
-
+    if(index % 100 == 0):
+        print(index, 'Done')
     # print("Captions for image {}".format(train_image_list[index]))
     for i, caption in enumerate(captions):
         sentence = [str(w) for w in caption.sentence]

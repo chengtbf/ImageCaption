@@ -5,11 +5,11 @@ import tensorflow as tf
 import show_and_tell_model
 import read_data
 
-train_step = 1
-single_train_step_checkpoints = 300000
-checkpoint_steps = single_train_step_checkpoints * train_step
-label_image_num = 1000
-unlabel_image_num = 5000
+
+conf = configuration.MyConfig()
+
+train_step = conf.train_step
+checkpoint_steps = conf.original_train_steps + (train_step - 2) * conf.interval_train_steps
 
 checkpoint_path = "train_log/{}.ckpt".format(checkpoint_steps)
 
@@ -17,7 +17,7 @@ model_config = configuration.ModelConfig()
 training_config = configuration.TrainingConfig()
 
 iter = read_data.DataIterator(encoded_image_path="data/feat.hdf5",
-                              caption_vector_path="train_log/{}_infer_train_vector.txt".format(checkpoint_steps),image_size=label_image_num + unlabel_image_num)
+                              caption_vector_path="train_log/{}_infer_train_vector.txt".format(checkpoint_steps),image_size=conf.label_image_size + conf.unlabel_image_size)
 
 # gpu_config = tf.ConfigProto(device_count = {'GPU': 1})
 # sess = tf.InteractiveSession(config=gpu_config)
@@ -43,7 +43,7 @@ loss_stored = []
 # step = epoch * train_data_set / batch_size
 
 # with tf.device('/gpu:1'):
-for i in range(train_step * single_train_step_checkpoints, (train_step + 1) * single_train_step_checkpoints):
+for i in range(checkpoint_steps, checkpoint_steps + conf.interval_train_steps):
     images, in_seqs, tar_seqs, masks = iter.next_batch(model_config.batch_size)
     loss = model.run_batch(sess, images, in_seqs, tar_seqs, masks)
     #every 100 steps print loss value

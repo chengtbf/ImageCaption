@@ -10,19 +10,16 @@ import json
 import os
 os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
+conf = configuration.MyConfig()
+
 vocab = vocabulary.Vocabulary("data/dic.txt")
 file = h5py.File("data/feat.hdf5", 'r')
 encoded_images = file['valid_set']
 valid_list_file = "data/valid_list.txt"
-train_step = 1
-single_train_step_checkpoints = 300000
-checkpoint_steps = single_train_step_checkpoints * (1 + train_step)
-label_image_num = 1000
-unlabel_image_num = 5000
+train_step = conf.train_step
+checkpoint_steps = conf.original_train_steps + (train_step - 1) * conf.interval_train_steps
 
-# check_point_path = "/home/chengcheng/dataset/image_caption/checkpoints/{}_{}/{}.ckpt".format(label_image_num, unlabel_image_num,checkpoint_steps)
 check_point_path = "train_log/{}.ckpt".format(checkpoint_steps)
-# check_point_path = "train_log/{}.ckpt".format(280000)
 
 model = inference_wrapper.InferenceWrapper()
 restore_fn = model.build_graph_from_config(configuration.ModelConfig(),
@@ -58,6 +55,6 @@ for index in range(1000):
         # print("  %d) %s (p=%f)" % (i, sentence, math.exp(caption.logprob)))
 
 
-result_file = open("infer_result/{}_{}_valid_result_feat2_it{}_{}.json".format(label_image_num, unlabel_image_num, train_step, checkpoint_steps),"w")
+result_file = open("infer_result/{}_{}_valid_result_step{}_{}.json".format(conf.label_image_size, conf.unlabel_image_size, conf.train_step, checkpoint_steps),"w")
 # result_file = open("infer_result/1000_0_valid_result_280k_2.json","w")
 json.dump(result_list, result_file)
