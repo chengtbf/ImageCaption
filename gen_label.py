@@ -26,7 +26,7 @@ restore_fn = model.build_graph_from_config(configuration.ModelConfig(),
 sess = tf.InteractiveSession()
 restore_fn(sess)
 
-generator = caption_generator.CaptionGenerator(model, vocab, beam_size=conf.beam_size)
+generator = caption_generator.CaptionGenerator(model, vocab, beam_size=conf.beam_size, use_ngram=conf.use_ngram_gen_label)
 
 train_list_file = open(train_list_file, 'r')
 train_image_list = []

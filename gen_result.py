@@ -28,7 +28,7 @@ restore_fn = model.build_graph_from_config(configuration.ModelConfig(),
 sess = tf.InteractiveSession()
 restore_fn(sess)
 
-generator = caption_generator.CaptionGenerator(model, vocab, beam_size=1)
+generator = caption_generator.CaptionGenerator(model, vocab, beam_size=1, use_ngram=conf.use_ngram_gen_result)
 
 valid_list_file = open(valid_list_file, 'r')
 valid_image_list = []
@@ -55,6 +55,6 @@ for index in range(1000):
         # print("  %d) %s (p=%f)" % (i, sentence, math.exp(caption.logprob)))
 
 
-result_file = open("infer_result/{}_{}_valid_result_step{}_{}.json".format(conf.label_image_size, conf.unlabel_image_size, conf.train_step, checkpoint_steps),"w")
+result_file = open("infer_result/{}_{}_valid_result_step{}_checkpoint{}_gram{}_scalar{}.json".format(conf.label_image_size, conf.unlabel_image_size, conf.train_step, checkpoint_steps, conf.n_gram, conf.n_gram_scalar),"w")
 # result_file = open("infer_result/1000_0_valid_result_280k_2.json","w")
 json.dump(result_list, result_file)

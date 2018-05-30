@@ -6,7 +6,7 @@ import heapq
 import math
 
 import numpy as np
-
+import configuration
 
 class Caption(object):
     """Represents a complete or partial caption."""
@@ -95,7 +95,9 @@ class CaptionGenerator(object):
                  vocab,
                  beam_size=3,
                  max_caption_length=20,
-                 length_normalization_factor=0.0):
+                 length_normalization_factor=0.0,
+                 use_ngram=False,
+                 ):
         """Initializes the generator.
         Args:
           model: Object encapsulating a trained image-to-text model. Must have
@@ -111,10 +113,13 @@ class CaptionGenerator(object):
         """
         self.vocab = vocab
         self.model = model
+        self.conf = configuration.MyConfig()
+        self.ngram_dic = np.load('data/1gram.npy')
 
         self.beam_size = beam_size
         self.max_caption_length = max_caption_length
         self.length_normalization_factor = length_normalization_factor
+        self.use_ngram = use_ngram
 
     def beam_search(self, sess, encoded_image):
         """Runs beam search caption generation on a single image.
@@ -150,7 +155,16 @@ class CaptionGenerator(object):
             # print('softmax',softmax,softmax.shape) # (1, 7000)
 
             for i, partial_caption in enumerate(partial_captions_list):
-                word_probabilities = softmax[i]
+                word_probabilities = 0
+                if self.use_ngram:
+                    original_word_probabilities = softmax[i]
+                    last_word_id = partial_caption.sentence[-1]
+                    ngram_prob = self.ngram_dic[last_word_id].reshape([1, 7000])
+
+                    word_probabilities = original_word_probabilities * self.conf.infer_scalar + ngram_prob * self.conf.n_gram_scalar
+                else:
+                    word_probabilities = softmax[i]
+
                 state = new_states[i]
                 # For this partial caption, get the beam_size most probable next words.
                 words_and_probs = list(enumerate(word_probabilities))
