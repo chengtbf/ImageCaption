@@ -26,7 +26,7 @@ model.build()
 
 sess.run(tf.global_variables_initializer())
 
-saver = tf.train.Saver(max_to_keep=3)
+saver = tf.train.Saver(max_to_keep=2)
 
 loss_stored = []
 
@@ -42,7 +42,7 @@ for i in range(conf.original_train_steps):
         loss_stored.append(loss)
 
     #every 1000 steps save check-point file
-    if (i+1) % 20000 == 0:
+    if (i+1) % 50000 == 0:
         print('save... step: {}, loss: {}'.format(i+1, loss))
         save_path = saver.save(sess, 'train_log/{}.ckpt'.format(i+1))
 

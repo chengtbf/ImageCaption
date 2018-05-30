@@ -64,7 +64,8 @@ class MyConfig(object):
   def __init__(self):
     self.train_step = 3
 
-    self.label_image_size = 2000
+    self.label_image_size = 3000
+
     self.unlabel_image_size = 6000 - self.label_image_size
 
     self.beam_size = 1
@@ -75,7 +76,7 @@ class MyConfig(object):
 
     self.original_train_steps = 300000
 
-    self.interval_train_steps = 140000
+    self.interval_train_steps = 150000
 
     self.n_gram = 0
 
