@@ -5,6 +5,7 @@ from __future__ import print_function
 import heapq
 import math
 
+import pickle
 import numpy as np
 import configuration
 
@@ -114,7 +115,9 @@ class CaptionGenerator(object):
         self.vocab = vocab
         self.model = model
         self.conf = configuration.MyConfig()
-        self.ngram_dic = np.load('data/1gram.npy')
+        # self.ngram_dic = np.load('data/1gram.npy')
+        f = open('data/1gram.pkl', 'rb')
+        self.ngram_dic = pickle.load(f)
 
         self.beam_size = beam_size
         self.max_caption_length = max_caption_length
@@ -159,15 +162,22 @@ class CaptionGenerator(object):
                 if self.use_ngram:
                     original_word_probabilities = softmax[i]
                     last_word_id = partial_caption.sentence[-1]
-                    ngram_prob = self.ngram_dic[last_word_id].reshape([1, 7000])
+                    ngram_prob = self.ngram_dic[last_word_id]
+                    # ngram_prob = ngram_prob.reshape([1, 7000])
 
                     word_probabilities = original_word_probabilities * self.conf.infer_scalar + ngram_prob * self.conf.n_gram_scalar
+                    # print(word_probabilities)
+                    # print(word_probabilities.shape)
                 else:
                     word_probabilities = softmax[i]
 
+                # print(softmax[i])
+                # print(softmax[i].shape)
                 state = new_states[i]
                 # For this partial caption, get the beam_size most probable next words.
                 words_and_probs = list(enumerate(word_probabilities))
+
+                # print(words_and_probs)
                 words_and_probs.sort(key=lambda x: -x[1])
                 words_and_probs = words_and_probs[0:self.beam_size]
                 # Each next word gives a new partial caption.

@@ -27,12 +27,13 @@ read2data(valid_file)
 # read2data(valid_file)
 read2data(test_file)
 
+'''
 # 1 gram
-
-gram_1_dic = {}
 
 def get_prob(x):
     return x / x.sum()
+
+gram_1_dic = {}
 
 for i in range(len(data)):
     for j in range(len(data[i]) - 1):
@@ -47,5 +48,43 @@ for key in gram_1_dic:
     gram_1_dic[key] = get_prob(gram_1_dic[key])
 
 # np.save('data/1gram.npy', gram_1_dic)
-# f = open('data/1gram.pkl', 'wb')
-# pickle.dump(gram_1_dic, f, pickle.HIGHEST_PROTOCOL)
+f = open('data/1gram.pkl', 'wb')
+pickle.dump(gram_1_dic, f, pickle.HIGHEST_PROTOCOL)
+'''
+
+# 2 gram
+
+def get_prob(x):
+    sum_x = 0
+    for key in x:
+        sum_x += x[key]
+    for key in x:
+        x[key] = x[key] / sum_x
+    return x
+
+gram2_dic = {}
+
+for i in range(len(data)):
+    for j in range(len(data[i]) - 1):
+        key = ""
+        if (j == 0):
+            key = repr(data[i][j]) + "_" + repr(data[i][j])
+        else:
+            key = repr(data[i][j]) + "_" + repr(data[i][j - 1])
+        value_index = data[i][j+1]
+        if key not in gram2_dic:
+            gram2_dic[key] = {}
+        if value_index not in gram2_dic[key]:
+            gram2_dic[key][value_index] = 0.0
+        gram2_dic[key][value_index] += 1.0
+
+
+for key in gram2_dic:
+    gram2_dic[key] = get_prob(gram2_dic[key])
+    # print(gram2_dic[key])
+    # break
+
+# np.save('data/1gram.npy', gram_1_dic)
+f = open('data/2gram.pkl', 'wb')
+pickle.dump(gram2_dic, f, pickle.HIGHEST_PROTOCOL)
+

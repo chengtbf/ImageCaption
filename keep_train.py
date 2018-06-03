@@ -52,7 +52,7 @@ for i in range(checkpoint_steps, checkpoint_steps + conf.interval_train_steps):
         loss_stored.append(loss)
 
     #every 1000 steps save check-point file
-    if (i+1) % 50000 == 0:
+    if (i+1) % 10000 == 0:
         print('save... step: {}, loss: {}'.format(i+1, loss))
         save_path = saver.save(sess, 'train_log/{}.ckpt'.format(i+1))
 '''

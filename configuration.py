@@ -62,9 +62,9 @@ class ModelConfig(object):
 
 class MyConfig(object):
   def __init__(self):
-    self.train_step = 1
+    self.train_step = 4
 
-    self.label_image_size = 500
+    self.label_image_size = 1000
 
     self.unlabel_image_size = 6000 - self.label_image_size
 
@@ -74,15 +74,15 @@ class MyConfig(object):
 
     self.original_train_vec_path = "data/train_vector.txt"
 
-    self.original_train_steps = 100000
+    self.original_train_steps = 150000
 
-    self.interval_train_steps = 100000
+    self.interval_train_steps = 50000
 
     self.n_gram = 1
 
-    self.n_gram_scalar = 0.1
+    self.n_gram_scalar = 0.05
 
-    self.infer_scalr = 1 - self.n_gram_scalar
+    self.infer_scalar = 1 - self.n_gram_scalar
 
     self.use_ngram_gen_label = True
 
