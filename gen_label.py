@@ -6,6 +6,8 @@ import tensorflow as tf
 import caption_generator
 import math
 import json
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 conf = configuration.MyConfig()
 vocab = vocabulary.Vocabulary("data/dic.txt")

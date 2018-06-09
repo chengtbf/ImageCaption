@@ -29,7 +29,7 @@ model = show_and_tell_model.ShowAndTellModel(model_config, mode="train")
 model.build()
 sess.run(tf.global_variables_initializer())
 
-saver = tf.train.Saver(max_to_keep=2)
+saver = tf.train.Saver(max_to_keep=1)
 
 # if tf.gfile.IsDirectory(checkpoint_path):
 #     checkpoint_path = tf.train.latest_checkpoint(checkpoint_path)
