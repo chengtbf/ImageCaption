@@ -62,7 +62,8 @@ class ModelConfig(object):
 
 class MyConfig(object):
   def __init__(self):
-    self.train_step = 3
+    self.train_step = 5
+    # self.train_step = 6
 
     self.label_image_size = 3000
 
@@ -80,7 +81,8 @@ class MyConfig(object):
 
     self.n_gram = 1
 
-    self.n_gram_scalar = 0.1
+    self.n_gram_scalar = 0.05
+    # self.n_gram_scalar = 0.1
 
     self.infer_scalar = 1 - self.n_gram_scalar
 
