@@ -115,9 +115,13 @@ class CaptionGenerator(object):
         self.vocab = vocab
         self.model = model
         self.conf = configuration.MyConfig()
+        if self.conf.n_gram == 1:
         # self.ngram_dic = np.load('data/1gram.npy')
-        f = open('data/1gram.pkl', 'rb')
-        self.ngram_dic = pickle.load(f)
+            f = open('data/1gram.pkl', 'rb')
+            self.ngram_dic = pickle.load(f)
+        elif self.conf.n_gram == 2:
+            f = open('data/2gram.pkl', 'rb')
+            self.ngram_dic = pickle.load(f)
 
         self.beam_size = beam_size
         self.max_caption_length = max_caption_length
@@ -158,18 +162,38 @@ class CaptionGenerator(object):
             # print('softmax',softmax,softmax.shape) # (1, 7000)
 
             for i, partial_caption in enumerate(partial_captions_list):
-                word_probabilities = 0
+                word_probabilities = softmax[i]
                 if self.use_ngram:
-                    original_word_probabilities = softmax[i]
-                    last_word_id = partial_caption.sentence[-1]
-                    ngram_prob = self.ngram_dic[last_word_id]
-                    # ngram_prob = ngram_prob.reshape([1, 7000])
+                    if self.conf.n_gram == 1:
+                        original_word_probabilities = softmax[i]
+                        last_word_id = partial_caption.sentence[-1]
+                        ngram_prob = self.ngram_dic[last_word_id]
+                        # ngram_prob = ngram_prob.reshape([1, 7000])
 
-                    word_probabilities = original_word_probabilities * self.conf.infer_scalar + ngram_prob * self.conf.n_gram_scalar
-                    # print(word_probabilities)
-                    # print(word_probabilities.shape)
-                else:
-                    word_probabilities = softmax[i]
+                        word_probabilities = original_word_probabilities * self.conf.infer_scalar + ngram_prob * self.conf.n_gram_scalar
+                        # print(word_probabilities)
+                        # print(word_probabilities.shape)
+                    elif self.conf.n_gram == 2 and len(partial_caption.sentence) >= 2:
+                        original_word_probabilities = softmax[i]
+                        # last_word_id = partial_caption.sentence[-1]
+                        word_key = repr(partial_caption.sentence[-1]) + "_" + repr(partial_caption.sentence[-2])
+                        # print(word_key)
+                        if word_key in self.ngram_dic:
+                            # print('wrong!')
+                            word_probabilities = original_word_probabilities * self.conf.infer_scalar
+                            # print(self.ngram_dic[word_key])
+                            for word_id in self.ngram_dic[word_key]:
+                                word_probabilities[word_id] += self.ngram_dic[word_key][word_id] * self.conf.n_gram_scalar
+                        # ngram_prob = np.zeros(7000)
+                        # for word_id in self.ngram_dic[word_key]:
+                        #     ngram_prob[word_id] += self.ngram_dic[word_key][word_id]
+                        # self.ngram_dic[last_word_id]
+                        # ngram_prob = ngram_prob.reshape([1, 7000])
+
+                        # word_probabilities = original_word_probabilities * self.conf.infer_scalar + ngram_prob * self.conf.n_gram_scalar
+                # print(word_probabilities)
+                # print(word_probabilities.shape)
+
 
                 # print(softmax[i])
                 # print(softmax[i].shape)
@@ -182,6 +206,7 @@ class CaptionGenerator(object):
                 words_and_probs = words_and_probs[0:self.beam_size]
                 # Each next word gives a new partial caption.
                 for w, p in words_and_probs:
+                    # print(w)
                     if p < 1e-12:
                         continue  # Avoid log(0).
                     sentence = partial_caption.sentence + [w]

@@ -72,4 +72,5 @@ for index in range(index, index + conf.unlabel_image_size):
         # result_list.append({"image_id" : index, "caption" : sentence})
         # f.write("  %d) %s (p=%f)\n" % (i, sentence, math.exp(caption.logprob)))
         # print("  %d) %s (p=%f)" % (i, sentence, math.exp(caption.logprob)))
+    # break
 label_file.close()
