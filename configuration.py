@@ -69,7 +69,7 @@ class MyConfig(object):
 
     self.unlabel_image_size = 6000 - self.label_image_size
 
-    self.beam_size = 1
+    self.beam_size = 2
 
     self.feat_path = "data/feat.hdf5"
 
@@ -79,9 +79,9 @@ class MyConfig(object):
 
     self.interval_train_steps = 100000
 
-    self.n_gram = 2
+    self.n_gram = 1
 
-    self.n_gram_scalar = 0.05
+    self.n_gram_scalar = 0.1
     # self.n_gram_scalar = 0.1
 
     self.infer_scalar = 1 - self.n_gram_scalar

@@ -55,6 +55,6 @@ for index in range(1000):
         # print("  %d) %s (p=%f)" % (i, sentence, math.exp(caption.logprob)))
 
 
-result_file = open("infer_result/{}_{}_valid_result_step{}_checkpoint{}_gram{}_scalar{}.json".format(conf.label_image_size, conf.unlabel_image_size, conf.train_step, checkpoint_steps, conf.n_gram, conf.n_gram_scalar),"w")
+result_file = open("infer_result/{}_{}_valid_result_step{}_checkpoint{}_gram{}_scalar{}_beam{}.json".format(conf.label_image_size, conf.unlabel_image_size, conf.train_step, checkpoint_steps, conf.n_gram, conf.n_gram_scalar, conf.beam_size),"w")
 # result_file = open("infer_result/1000_0_valid_result_280k_2.json","w")
 json.dump(result_list, result_file)

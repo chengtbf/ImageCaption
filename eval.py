@@ -11,7 +11,7 @@ conf = configuration.MyConfig()
 train_step = conf.train_step
 checkpoint_steps = conf.original_train_steps + (train_step - 1) * conf.interval_train_steps
 # set up file names and pathes
-resultFile = "infer_result/{}_{}_valid_result_step{}_checkpoint{}_gram{}_scalar{}.json".format(conf.label_image_size, conf.unlabel_image_size, conf.train_step, checkpoint_steps, conf.n_gram, conf.n_gram_scalar)
+resultFile = "infer_result/{}_{}_valid_result_step{}_checkpoint{}_gram{}_scalar{}_beam{}.json".format(conf.label_image_size, conf.unlabel_image_size, conf.train_step, checkpoint_steps, conf.n_gram, conf.n_gram_scalar, conf.beam_size)
 # resultFile = "infer_result/{}_{}_valid_result_step{}_{}.json".format(conf.label_image_size, conf.unlabel_image_size, conf.train_step, checkpoint_steps)
 # resultFile="infer_result/{}_{}_valid_result_feat2_it{}_{}.json".format(label_image_num, unlabel_image_num,train_step, check_point_steps)
 # resultFile = "infer_result/1000_0_valid_result_280k_2.json"
@@ -38,7 +38,7 @@ cocoEval = COCOEvalCap(coco, cocoRes)
 cocoEval.evaluate()
 
 eval_result = open('data/eval_result.txt','a')
-eval_result.write("{}label_{}unlabel_{}step_it{}_gram{}_scalar{}_result:\n".format(conf.label_image_size, conf.unlabel_image_size, train_step, checkpoint_steps, conf.n_gram, conf.n_gram_scalar))
+eval_result.write("{}label_{}unlabel_{}step_it{}_gram{}_scalar{}_beam{}_result:\n".format(conf.label_image_size, conf.unlabel_image_size, train_step, checkpoint_steps, conf.n_gram, conf.n_gram_scalar, conf.beam_size))
 print('final result:')
 
 for metric, score in cocoEval.eval.items():
