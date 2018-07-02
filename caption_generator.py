@@ -122,6 +122,9 @@ class CaptionGenerator(object):
         elif self.conf.n_gram == 2:
             f = open('data/2gram.pkl', 'rb')
             self.ngram_dic = pickle.load(f)
+        elif self.conf.n_gram == 3:
+            f = open('data/3gram.pkl', 'rb')
+            self.ngram_dic = pickle.load(f)
 
         self.beam_size = beam_size
         self.max_caption_length = max_caption_length
@@ -173,10 +176,12 @@ class CaptionGenerator(object):
                         word_probabilities = original_word_probabilities * self.conf.infer_scalar + ngram_prob * self.conf.n_gram_scalar
                         # print(word_probabilities)
                         # print(word_probabilities.shape)
-                    elif self.conf.n_gram == 2 and len(partial_caption.sentence) >= 2:
+                    elif self.conf.n_gram == 2:
                         original_word_probabilities = softmax[i]
                         # last_word_id = partial_caption.sentence[-1]
-                        word_key = repr(partial_caption.sentence[-1]) + "_" + repr(partial_caption.sentence[-2])
+                        word_key = repr(partial_caption.sentence[-1]) + "_" + repr(partial_caption.sentence[-1])
+                        if len(partial_caption.sentence) >= 2:
+                            word_key = repr(partial_caption.sentence[-1]) + "_" + repr(partial_caption.sentence[-2])
                         # print(word_key)
                         if word_key in self.ngram_dic:
                             # print('wrong!')
@@ -191,9 +196,25 @@ class CaptionGenerator(object):
                         # ngram_prob = ngram_prob.reshape([1, 7000])
 
                         # word_probabilities = original_word_probabilities * self.conf.infer_scalar + ngram_prob * self.conf.n_gram_scalar
+                    elif self.conf.n_gram == 3 :
+                        original_word_probabilities = softmax[i]
+                        # last_word_id = partial_caption.sentence[-1]
+                        word_key = repr(partial_caption.sentence[-1]) + "_" + repr(partial_caption.sentence[-1]) + "_" + repr(partial_caption.sentence[-1])
+                        if len(partial_caption.sentence) == 2:
+                            word_key = repr(partial_caption.sentence[-1]) + "_" + repr(partial_caption.sentence[-1]) + "_" + repr(partial_caption.sentence[-2])
+                        elif len(partial_caption.sentence) >= 3:
+                            word_key = repr(partial_caption.sentence[-1]) + "_" + repr(partial_caption.sentence[-2]) + "_" + repr(partial_caption.sentence[-3])
+                        # print(word_key)
+                        if word_key in self.ngram_dic:
+                            # print('wrong!')
+                            word_probabilities = original_word_probabilities * self.conf.infer_scalar
+                            # print(self.ngram_dic[word_key])
+                            for word_id in self.ngram_dic[word_key]:
+                                word_probabilities[word_id] += self.ngram_dic[word_key][word_id] * self.conf.n_gram_scalar
+                        else:
+                            print("can not find key: " + word_key)
                 # print(word_probabilities)
                 # print(word_probabilities.shape)
-
 
                 # print(softmax[i])
                 # print(softmax[i].shape)

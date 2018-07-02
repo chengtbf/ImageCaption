@@ -52,6 +52,7 @@ f = open('data/1gram.pkl', 'wb')
 pickle.dump(gram_1_dic, f, pickle.HIGHEST_PROTOCOL)
 '''
 
+'''
 # 2 gram
 
 def get_prob(x):
@@ -87,4 +88,43 @@ for key in gram2_dic:
 # np.save('data/1gram.npy', gram_1_dic)
 f = open('data/2gram.pkl', 'wb')
 pickle.dump(gram2_dic, f, pickle.HIGHEST_PROTOCOL)
+'''
+
+# 3 gram
+
+def get_prob(x):
+    sum_x = 0
+    for key in x:
+        sum_x += x[key]
+    for key in x:
+        x[key] = x[key] / sum_x
+    return x
+
+gram3_dic = {}
+
+for i in range(len(data)):
+    for j in range(len(data[i]) - 1):
+        key = ""
+        if (j == 0):
+            key = repr(data[i][j]) + "_" + repr(data[i][j]) + "_" + repr(data[i][j])
+        elif j == 1:
+            key = repr(data[i][j]) + "_" + repr(data[i][j]) + "_" + repr(data[i][j - 1])
+        else:
+            key = repr(data[i][j]) + "_" + repr(data[i][j - 1]) + "_" + repr(data[i][j - 2])
+        value_index = data[i][j+1]
+        if key not in gram3_dic:
+            gram3_dic[key] = {}
+        if value_index not in gram3_dic[key]:
+            gram3_dic[key][value_index] = 0.0
+        gram3_dic[key][value_index] += 1.0
+
+
+for key in gram3_dic:
+    gram3_dic[key] = get_prob(gram3_dic[key])
+    # print(gram2_dic[key])
+    # break
+
+# np.save('data/1gram.npy', gram_1_dic)
+f = open('data/3gram.pkl', 'wb')
+pickle.dump(gram3_dic, f, pickle.HIGHEST_PROTOCOL)
 

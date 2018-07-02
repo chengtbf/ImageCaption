@@ -65,23 +65,23 @@ class MyConfig(object):
     self.train_step = 2
     # self.train_step = 6
 
-    self.label_image_size = 2000
+    self.label_image_size = 500
 
     self.unlabel_image_size = 6000 - self.label_image_size
 
-    self.beam_size = 2
+    self.beam_size = 1
 
     self.feat_path = "data/feat.hdf5"
 
     self.original_train_vec_path = "data/train_vector.txt"
 
-    self.original_train_steps = 300000
+    self.original_train_steps = 100000
 
-    self.interval_train_steps = 100000
+    self.interval_train_steps = 50000
 
-    self.n_gram = 1
+    self.n_gram = 3
 
-    self.n_gram_scalar = 0.1
+    self.n_gram_scalar = 0.05
     # self.n_gram_scalar = 0.1
 
     self.infer_scalar = 1 - self.n_gram_scalar
